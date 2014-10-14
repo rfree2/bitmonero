@@ -116,17 +116,8 @@ if (UNIX AND NOT APPLE)
   find_package(Threads)
 endif()
 
-add_subdirectory(external)
-
-# Final setup for miniupnpc
-if(UPNP_STATIC)
-  add_definitions("-DUPNP_STATIC")
-else()
-  add_definitions("-DUPNP_DYNAMIC")
-  include_directories(${UPNP_INCLUDE})
-endif()
-
-# Final setup for libunbound
+# Find unbound - don't move this to the end, cmake is weird about this
+find_package(Unbound REQUIRED)
 include_directories(${UNBOUND_INCLUDE})
 
 if(MSVC)
@@ -251,5 +242,19 @@ else()
   add_custom_target(version ALL)
 endif()
 
+add_subdirectory(external)
+
+# Final setup for miniupnpc
+if(UPNP_STATIC)
+  add_definitions("-DUPNP_STATIC")
+else()
+  add_definitions("-DUPNP_DYNAMIC")
+  include_directories(${UPNP_INCLUDE})
+endif()
+
+add_subdirectory(contrib)
 add_subdirectory(src)
-add_subdirectory(tests)
+
+if (BUILD_TESTS)
+	#add_subdirectory(tests)
+endif ()
