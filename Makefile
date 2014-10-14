@@ -33,10 +33,19 @@ cmake-debug:
 build-debug: cmake-debug
 	( cd build/debug && $(MAKE) )
 
-test-debug: build-debug
-	( cd build/debug && $(MAKE) test )
-
 all-debug: build-debug
+
+# test-ebug: build tests in the debug version
+cmake-test-debug:
+	mkdir -p build/debug
+	( cd build/debug && cmake -D BUILD_TESTS=ON  -D CMAKE_BUILD_TYPE=Debug ../.. && echo "Done configuring for tests" )
+
+test-debug: cmake-test-debug
+	( cd build/debug && $(MAKE) && echo "Done building for tests" )
+
+test: test-debug
+	@echo "Will run tests"
+	( cd build/debug/ && /usr/bin/ctest --force-new-ctest-process $(ARGS) )
 
 # release: the main release:
 cmake-release:
@@ -45,9 +54,6 @@ cmake-release:
 
 build-release: cmake-release
 	( cd build/release && $(MAKE) )
-
-test-release: build-release
-	( cd build/release && $(MAKE) test )
 
 all-release: build-release
 
@@ -85,6 +91,6 @@ _warn_fast:
 _warn_fast2: _warn_fast
 
 
-.PHONY: run all cmake-debug build-debug test-debug all-debug cmake-release build-release test-release all-release clean clear clean-force clear-force tags cmake-fast build-fast all-fast fast _warn_fast _warn_fast2 
+.PHONY: run all cmake-debug build-debug test-debug all-debug cmake-release build-release all-release test clean clear clean-force clear-force tags cmake-fast build-fast all-fast fast _warn_fast _warn_fast2 
 
 
