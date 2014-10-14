@@ -37,6 +37,16 @@ if(NOT WIN32)
 endif()
 
 set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+set (CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/build/release")
+
+# Options
+
+option(BUILD_TESTS "Build tests" ON)
+option(BUILD_CONN_TOOL "Build connectivity tool" ON)
+option(BUILD_SIMPLE_MINER "Build simple miner" ON)
+option(BUILD_SIMPLE_WALLET "Build simple wallet" ON)
+option(BUILD_TESTFUNC "Build functional tests" ON)
+option(ENABLE_COTIRE "Enable cotire - CMake module to speed up builds" ON)	
 
 if (NOT DEFINED ENV{DEVELOPER_LOCAL_TOOLS})
 	message(STATUS "Could not find DEVELOPER_LOCAL_TOOLS in env (not required)")
@@ -52,6 +62,12 @@ endif()
 
 message(STATUS "BOOST_IGNORE_SYSTEM_PATHS defaults to ${BOOST_IGNORE_SYSTEM_PATHS_DEFAULT}")
 option(BOOST_IGNORE_SYSTEM_PATHS "Ignore boost system paths for local boost ins	tallation" $BOOST_IGNORE_SYSTEM_PATHS_DEFAULT)
+
+# Options (for external/otshell_utils/)
+option(WITH_TERMCOLORS "Build with support for unix terminal console colors VT100" ON)
+if (WITH_TERMCOLORS)
+	add_definitions( -DCFG_WITH_TERMCOLORS )
+endif ()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release")
