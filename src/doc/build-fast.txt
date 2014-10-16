@@ -1,4 +1,8 @@
 
+This doc is mostly deprecated as of 2014-10-10, now the main Makefile should call CMake by default in the "fast" mode.
+
+
+
 Fast rebuilds with cmake (on example of linux, similar is for windows).
 All builds (after the 1st build especially) will be faster now:
 1. cotire (precompiled headers)
@@ -24,4 +28,6 @@ On windows this is the same, except for other mkdir commnad (just create directo
 
 
 *** TESTED ***
+
+This was used on Debian 7 (with updated compiler and boost)
 
