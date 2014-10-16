@@ -1,23 +1,41 @@
 .DS_Store
-/doc
 /build
 /tags
+
+# /doc stays, because of /doc/images/ that are indeed not-rebuildable files
+# doxygen generate files are ignored though:
+doc/html/
+
+
+-TAGS
+-!TAGS/
+-tags
+-!tags/
+-gtags.files
+-GTAGS
+-GRTAGS
+-GPATH
+-cscope.files
+-cscope.out
+-cscope.in.out
+-cscope.po.out
 
 # vim swap files
 *.swp
 *.swo
-TAGS
-!TAGS/
-tags
-!tags/
-gtags.files
-GTAGS
-GRTAGS
-GPATH
-cscope.files
-cscope.out
-cscope.in.out
-cscope.po.out
 
+# cmake cache (if run in old way in build/ - should be not used)
+src/CMakeCache.txt
+src/CMakeFiles/
 
+# logs
+log/
+
+# dr-monero
+utils/dr-monero/*.o
+utils/dr-monero/*.pro.user
+
+# cmake
+CMakeCache.txt
+CMakeFiles/
 

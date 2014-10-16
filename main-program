@@ -1,0 +1,7 @@
+#!/bin/bash
+
+#This is what will be run for make run:
+
+./build/$1/src/bitmonerod
+# --no-igd
+

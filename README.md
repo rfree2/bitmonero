@@ -8,7 +8,8 @@ Web: [monero.cc](http://monero.cc)
 Mail: [dev@monero.cc](mailto:dev@monero.cc)  
 Github (staging): [https://github.com/monero-project/bitmonero](https://github.com/monero-project/bitmonero)  
 Github (development): [http://github.com/monero-project/bitmonero/tree/development](http://github.com/monero-project/bitmonero/tree/development)  
-IRC: [#monero-dev on Freenode](irc://chat.freenode.net/#monero-dev)
+IRC: #monero-dev on Freenode irc://chat.freenode.net/#monero-dev  
+IRC-private: anonymous connection to #monero-dev: [geti2p.net](https://geti2p.net/) and [i2p-tutorials](https://www.youtube.com/user/i2ptutorials)  
 
 ## Introduction
 
@@ -86,12 +87,23 @@ Static Build Additional Dependencies: ldns 1.6.17 or later, expat 1.1 or later
 * Download the [MSYS2 installer](http://msys2.github.io), 64-bit or 32-bit as needed, and run it.
 * Use the shortcut associated with your architecture to launch the MSYS2 environment. On 64-bit systems that would be the MinGW-w64 Win64 Shell shortcut. Note that if you are running 64-bit Windows, you will have both 64-bit and 32-bit environments.
 * Update the packages in your MSYS2 install:
+
+Sometimes it is needed to first run this commands (probably for windows 32-bit):
+```
+pacman-key --init
+pacman-key --populate msys2
+pacman-key --refresh-keys
+```
+
+And then always run this commands:
+
 ```
 pacman -Sy
 pacman -Su --ignoregroup base
 pacman -Su
 ```
 * For those of you already familiar with pacman, you can run the normal `pacman -Syu` to update, but you may get errors and need to restart MSYS2 if pacman's dependencies are updated.
+* In case of windows-32, for the next commands replace "x86_64" with i686 (few times in line if needed)
 * Install dependencies: `pacman -S mingw-w64-x86_64-gcc make mingw-w64-x86_64-cmake mingw-w64-x86_64-unbound mingw-w64-x86_64-boost`
 * If you are planning to build statically you will also need to install: `pacman -S mingw-w64-x86_64-ldns mingw-w64-x86_64-expat` (note that these are likely already installed by the unbound dependency installation above)
 
@@ -115,6 +127,8 @@ cmake -G "MSYS Makefiles" -D CMAKE_BUILD_TYPE=Release -D CMAKE_TOOLCHAIN_FILE=..
 
 If you installed MSYS2 in a folder other than c:/msys64, make the appropriate substitution above.
 
+Some of users reported problems e.g. with SSL_EAY_LIBRARY; New version should soon solve this. Contact us for help (e.g. IRC).
+
 **Advanced options:**
 
 * Parallel build: run `make -j<number of threads>` instead of `make`.
@@ -137,3 +151,4 @@ Dependencies: Doxygen 1.8.0 or later, Graphviz 2.28 or later (optional).
 * To build, change to the root of the source code directory, and run `doxygen Doxyfile`
 * If you have installed Graphviz, you can also generate in-doc diagrams by instead running `HAVE_DOT=YES doxygen Doxyfile`
 * The output will be built in doc/html/
+

@@ -37,6 +37,16 @@ if(NOT WIN32)
 endif()
 
 set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+# set (CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/")
+
+# Options
+
+option(BUILD_TESTS "Build tests" ON)
+option(BUILD_CONN_TOOL "Build connectivity tool" ON)
+option(BUILD_SIMPLE_MINER "Build simple miner" ON)
+option(BUILD_SIMPLE_WALLET "Build simple wallet" ON)
+option(BUILD_TESTFUNC "Build functional tests" ON)
+option(ENABLE_COTIRE "Enable cotire - CMake module to speed up builds" ON)	
 
 if (NOT DEFINED ENV{DEVELOPER_LOCAL_TOOLS})
 	message(STATUS "Could not find DEVELOPER_LOCAL_TOOLS in env (not required)")
@@ -52,6 +62,12 @@ endif()
 
 message(STATUS "BOOST_IGNORE_SYSTEM_PATHS defaults to ${BOOST_IGNORE_SYSTEM_PATHS_DEFAULT}")
 option(BOOST_IGNORE_SYSTEM_PATHS "Ignore boost system paths for local boost ins	tallation" $BOOST_IGNORE_SYSTEM_PATHS_DEFAULT)
+
+# Options (for external/otshell_utils/)
+option(WITH_TERMCOLORS "Build with support for unix terminal console colors VT100" ON)
+if (WITH_TERMCOLORS)
+	add_definitions( -DCFG_WITH_TERMCOLORS )
+endif ()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release")
@@ -100,17 +116,8 @@ if (UNIX AND NOT APPLE)
   find_package(Threads)
 endif()
 
-add_subdirectory(external)
-
-# Final setup for miniupnpc
-if(UPNP_STATIC)
-  add_definitions("-DUPNP_STATIC")
-else()
-  add_definitions("-DUPNP_DYNAMIC")
-  include_directories(${UPNP_INCLUDE})
-endif()
-
-# Final setup for libunbound
+# Find unbound - don't move this to the end, cmake is weird about this
+find_package(Unbound REQUIRED)
 include_directories(${UNBOUND_INCLUDE})
 
 if(MSVC)
@@ -217,9 +224,9 @@ if(MINGW)
 elseif(APPLE OR FREEBSD)
   set(EXTRA_LIBRARIES "")
 elseif(NOT MSVC)
-  find_library(RT rt)
-  find_library(PTHREAD pthread)
-  find_library(DL dl)
+  #find_library(RT rt)
+  #find_library(PTHREAD pthread)
+  #find_library(DL dl)
   set(EXTRA_LIBRARIES ${RT} ${PTHREAD} ${DL})
 endif()
 
@@ -235,5 +242,19 @@ else()
   add_custom_target(version ALL)
 endif()
 
+add_subdirectory(external)
+
+# Final setup for miniupnpc
+if(UPNP_STATIC)
+  add_definitions("-DUPNP_STATIC")
+else()
+  add_definitions("-DUPNP_DYNAMIC")
+  include_directories(${UPNP_INCLUDE})
+endif()
+
+add_subdirectory(contrib)
 add_subdirectory(src)
-add_subdirectory(tests)
+
+if (BUILD_TESTS)
+	add_subdirectory(tests)
+endif ()

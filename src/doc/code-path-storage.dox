@@ -1,0 +1,33 @@
+
+Who created/deinit blockchain storage (who causes db load/save too)
+
+
+Init:
+@TODO
+
+
+
+Deinit:
+
+dbg    [cryptonote_core.cpp+56 ::send_stop_signal] Sending stop signal (core)
+Note   [net_node.inl+433 ::send_stop_signal] [node] Sending stop signal - sent
+2014-Sep-09 12:19:17.536897 [SRV_MAIN]Stopping core rpc server...
+2014-Sep-09 12:19:17.537064 [SRV_MAIN]Deinitializing rpc server...
+Note   [connection_basic.cpp+158 ::~connection_basic] Destructing connection p2p#0
+2014-Sep-09 12:19:17.537212 [SRV_MAIN]Deinitializing p2p...
+2014-Sep-09 12:19:27.543885 [SRV_MAIN]Interrupting thread 3503148603136
+Note   [connection_basic.cpp+158 ::~connection_basic] Destructing connection p2p#1
+2014-Sep-09 12:19:27.545119 [SRV_MAIN]Deinitializing core...
+2014-Sep-09 12:19:27.545153 [SRV_MAIN]Mining has been stopped, 0 finished
+2014-Sep-09 12:19:27.546431 [SRV_MAIN]Storing blockchain...
+
+src/cryptonote_core/blockchain_storage.cpp  blockchain_storage::deinit()
+from:
+src/cryptonote_core/cryptonote_core.cpp:    m_blockchain_storage.deinit() from core::deinit()
+from:
+~core
+
+
+
+
+
