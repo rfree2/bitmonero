@@ -41,12 +41,16 @@ using namespace epee;
 #include "cryptonote_config.h"
 #include "cryptonote_format_utils.h"
 #include "misc_language.h"
-#include <csignal>
+
+#include "../../../contrib/otshell_utils/utils.hpp"
+using namespace nOT::nUtils;
 
 DISABLE_VS_WARNINGS(4355)
 
 namespace cryptonote
 {
+
+std::atomic<bool> core::m_is_stopping(false);
 
   //-----------------------------------------------------------------------------------------------
   core::core(i_cryptonote_protocol* pprotocol):

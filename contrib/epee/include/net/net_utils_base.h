@@ -104,22 +104,25 @@ namespace net_utils
 	/************************************************************************/
 	struct i_service_endpoint
 	{
-		virtual bool do_send(const void* ptr, size_t cb)=0;
+    virtual bool do_send(const void* ptr, size_t cb)=0; ///< will send (or queue) data. could cut it into chunks
     virtual bool close()=0;
     virtual bool call_run_once_service_io()=0;
     virtual bool request_callback()=0;
     virtual boost::asio::io_service& get_io_service()=0;
+
     //protect from deletion connection object(with protocol instance) during external call "invoke"
-    virtual bool add_ref()=0;
-    virtual bool release()=0;
+    virtual bool add_ref()=0; ///< some kind of manual management of references to... ownself? TODO explain this
+    virtual bool release()=0; ///< TODO explain this
+
   protected:
-    virtual ~i_service_endpoint(){}
+    virtual ~i_service_endpoint(){} ///< TODO why?
 	};
 
 
   //some helpers
 
 
+	/// @brief for debug purposes print lable of this connection (e.g. IP addresses)
   inline 
     std::string print_connection_context(const connection_context_base& ctx)
   {
@@ -128,11 +131,13 @@ namespace net_utils
     return ss.str();
   }
 
+	/// @brief for debug purposes print lable of this connection (e.g. IP addresses) (shorter version)
   inline 
     std::string print_connection_context_short(const connection_context_base& ctx)
   {
     std::stringstream ss;
     ss << epee::string_tools::get_ip_string_from_int32(ctx.m_remote_ip) << ":" << ctx.m_remote_port << (ctx.m_is_income ? " INC":" OUT");
+		// @TODO debug lan ips here?
     return ss.str();
   }
 
@@ -143,7 +148,7 @@ namespace net_utils
 #define LOG_PRINT_CC_YELLOW(ct, message, log_level) LOG_PRINT_YELLOW("[" << epee::net_utils::print_connection_context_short(ct) << "]" << message, log_level)
 #define LOG_PRINT_CC_CYAN(ct, message, log_level) LOG_PRINT_CYAN("[" << epee::net_utils::print_connection_context_short(ct) << "]" << message, log_level)
 #define LOG_PRINT_CC_MAGENTA(ct, message, log_level) LOG_PRINT_MAGENTA("[" << epee::net_utils::print_connection_context_short(ct) << "]" << message, log_level)
-#define LOG_ERROR_CC(ct, message) LOG_PRINT_RED("[" << epee::net_utils::print_connection_context_short(ct) << "]" << message, LOG_LEVEL_2)
+#define LOG_ERROR_CC(ct, message) LOG_ERROR("[" << epee::net_utils::print_connection_context_short(ct) << "]" << message)
 
 #define LOG_PRINT_CC_L0(ct, message) LOG_PRINT_L0("[" << epee::net_utils::print_connection_context_short(ct) << "]" << message)
 #define LOG_PRINT_CC_L1(ct, message) LOG_PRINT_L1("[" << epee::net_utils::print_connection_context_short(ct) << "]" << message)

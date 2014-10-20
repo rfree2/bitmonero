@@ -41,23 +41,26 @@
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/variables_map.hpp>
 #include <boost/serialization/version.hpp>
-#include <boost/uuid/uuid.hpp>
 
-#include "cryptonote_config.h"
 #include "warnings.h"
 #include "net/levin_server_cp2.h"
 #include "p2p_protocol_defs.h"
 #include "storages/levin_abstract_invoke2.h"
 #include "net_peerlist.h"
+// #include "p2p_networks.h"
 #include "math_helper.h"
 #include "net_node_common.h"
 #include "common/command_line.h"
+//#include "rpc/connection_info.h"
 
 PUSH_WARNINGS
 DISABLE_VS_WARNINGS(4355)
 
+
+
 namespace nodetool
 {
+
   template<class base_type>
   struct p2p_connection_context_t: base_type //t_payload_net_handler::connection_context //public net_utils::connection_context_base
   {
@@ -79,15 +82,13 @@ namespace nodetool
 
   public:
     typedef t_payload_net_handler payload_net_handler;
-
-    node_server(
-        t_payload_net_handler& payload_handler
-      , boost::uuids::uuid network_id
-      )
-      : m_payload_handler(payload_handler)
-      , m_allow_local_ip(false)
-      , m_hide_my_port(false)
-      , m_network_id(std::move(network_id))
+    // Some code
+    node_server(t_payload_net_handler& payload_handler, boost::uuids::uuid network_id)
+		:m_payload_handler(payload_handler),
+		m_allow_local_ip(false),
+		m_no_igd(false),
+		m_hide_my_port(false),
+		m_network_id(std::move(network_id))
     {}
 
     static void init_options(boost::program_options::options_description& desc);
@@ -111,13 +112,18 @@ namespace nodetool
     virtual uint64_t get_connections_count();
     size_t get_outgoing_connections_count();
     peerlist_manager& get_peerlist_manager(){return m_peerlist;}
-  private:
-    const std::vector<std::string> m_seed_nodes_list =
-    { "seeds.moneroseeds.se"
-    , "seeds.moneroseeds.ae.org"
-    , "seeds.moneroseeds.ch"
-    , "seeds.moneroseeds.li"
-    };
+
+	void delete_connections(size_t count);
+		private:
+		const std::vector<std::string> m_seed_nodes_list =
+		{ "seeds.moneroseeds.se"
+		, "seeds.moneroseeds.ae.org"
+		, "seeds.moneroseeds.ch"
+		, "seeds.moneroseeds.li"
+		};
+
+	bool islimitup=false;
+    bool islimitdown=false;
 
     typedef COMMAND_REQUEST_STAT_INFO_T<typename t_payload_net_handler::stat_info> COMMAND_REQUEST_STAT_INFO;
 
@@ -174,7 +180,7 @@ namespace nodetool
     //bool get_local_handshake_data(handshake_data& hshd);
 
     bool merge_peerlist_with_local(const std::list<peerlist_entry>& bs);
-    bool fix_time_delta(std::list<peerlist_entry>& local_peerlist, time_t local_time, int64_t& delta);
+		bool fix_time_delta(std::list<peerlist_entry>& local_peerlist, time_t local_time, int64_t& delta);
 
     bool connections_maker();
     bool peer_sync_idle_maker();
@@ -197,7 +203,18 @@ namespace nodetool
     template <class Container>
     bool parse_peers_and_add_to_container(const boost::program_options::variables_map& vm, const command_line::arg_descriptor<std::vector<std::string> > & arg, Container& container);
 
-    //debug functions
+  	bool set_rate_up_limit(const boost::program_options::variables_map& vm, int64_t limit);
+  	bool set_rate_down_limit(const boost::program_options::variables_map& vm, int64_t limit);
+  	bool set_rate_limit(const boost::program_options::variables_map& vm, uint64_t limit);
+  	bool set_rate_autodetect(const boost::program_options::variables_map& vm, uint64_t limit);
+
+		bool set_tos_flag(const boost::program_options::variables_map& vm, int limit);
+		bool set_kill_limit(const boost::program_options::variables_map& vm, uint64_t limit);
+		bool set_max_out_peers(const boost::program_options::variables_map& vm, int64_t max);
+
+		
+
+  	//debug functions
     std::string print_connections_container();
 
 
@@ -213,8 +230,11 @@ namespace nodetool
         KV_SERIALIZE(m_peer_id)
       END_KV_SERIALIZE_MAP()
     };
+		public:
+    config m_config; // TODO was private, add getters?
 
-    config m_config;
+		private:
+
     std::string m_config_folder;
 
     bool m_have_address;
@@ -224,6 +244,7 @@ namespace nodetool
     uint32_t m_ip_address;
     bool m_allow_local_ip;
     bool m_hide_my_port;
+    bool m_no_igd;
 
     //critical_section m_connections_lock;
     //connections_indexed_container m_connections;

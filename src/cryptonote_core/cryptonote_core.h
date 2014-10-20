@@ -45,6 +45,7 @@
 #include "cryptonote_core/cryptonote_stat_info.h"
 #include "warnings.h"
 #include "crypto/hash.h"
+#include "cryptonote_core/blockchain_storage.h"
 
 PUSH_WARNINGS
 DISABLE_VS_WARNINGS(4355)
@@ -112,7 +113,7 @@ namespace cryptonote
      bool get_random_outs_for_amounts(const COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::request& req, COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::response& res);
      void pause_mine();
      void resume_mine();
-     blockchain_storage& get_blockchain_storage(){return m_blockchain_storage;}
+     blockchain_storage* get_blockchain_storage(){return &m_blockchain_storage;}
      //debug functions
      void print_blockchain(uint64_t start_index, uint64_t end_index);
      void print_blockchain_index();
@@ -145,8 +146,9 @@ namespace cryptonote
      bool handle_command_line(const boost::program_options::variables_map& vm, bool testnet);
      bool on_update_blocktemplate_interval();
      bool check_tx_inputs_keyimages_diff(const transaction& tx);
-     void graceful_exit();
+		 void graceful_exit();
 
+		 static std::atomic<bool> m_is_stopping; // are we stopping (globally used information)
 
      tx_memory_pool m_mempool;
      blockchain_storage m_blockchain_storage;

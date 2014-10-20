@@ -83,6 +83,8 @@ std::mutex gLoggerGuard; // extern
 
 // ====================================================================
 
+namespace nDetail {
+
 const char* DbgShortenCodeFileName(const char *s) {
 	const char *p = s;
 	const char *a = s;
@@ -94,6 +96,8 @@ const char* DbgShortenCodeFileName(const char *s) {
 		if ((*p)=='/') { a=p; inc=true; } // point at current slash (but set inc to try to point to next character)
 	}
 	return a;
+}
+
 }
 
 // a workaround for MSVC compiler; e.g. see https://bugs.webkit.org/show_bug.cgi?format=multiple&id=125795
@@ -469,46 +473,6 @@ bool checkPrefix(const string & str, char prefix) {
 // ====================================================================
 // operation on files
 
-bool cConfigManager::Load(const string & fileName, map<eSubjectType, string> & configMap){
-	_dbg1("Loading defaults.");
-
-	std::ifstream inFile(fileName.c_str());
-	if( inFile.good() && !(inFile.peek() == std::ifstream::traits_type::eof()) ) {
-		string line;
-		while( std::getline (inFile, line) ) {
-			_dbg2("Line: ["<<line<<"]");
-			vector<string> vec = SplitString(line);
-			if (vec.size() == 2) {
-			_dbg3("config2:"<<vec.at(0)<<","<<vec.at(1));
-				configMap.insert ( std::pair<eSubjectType, string>( String2SubjectType( vec.at(0) ), vec.at(1) ) );
-			}
-			else {
-			_dbg3("config1:"<<vec.at(0));
-				configMap.insert ( std::pair<eSubjectType, string>( String2SubjectType( vec.at(0) ), "-" ) );
-			}
-		}
-		_dbg1("Finished loading");
-		return true;
-	}
-	_dbg1("Unable to load");
-	return false;
-}
-
-void cConfigManager::Save(const string & fileName, const map<eSubjectType, string> & configMap) {
-	_dbg1("Will save config");
-
-	std::ofstream outFile(fileName.c_str());
-	for (auto pair : configMap) {
-		_dbg2("Got: "<<SubjectType2String(pair.first)<<","<<pair.second);
-		outFile << SubjectType2String(pair.first) << " ";
-		outFile << pair.second;
-		outFile << endl;
-		_dbg3("line saved");
-	}
-	_dbg1("All saved");
-}
-
-cConfigManager configManager;
 
 #ifdef __unix
 

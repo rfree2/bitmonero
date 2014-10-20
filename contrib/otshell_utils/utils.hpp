@@ -319,18 +319,6 @@ class cFilesystemUtils { // if we do not want to use boost in given project (or 
 		static char GetDirSeparator(); // eg '/' or '\'
 };
 
-// ====================================================================
-// operation on files 2
-
-/// @brief simple configuration
-/// @author rfree (maintainer)
-class cConfigManager {
-public:
-	bool Load(const string & fileName, map<eSubjectType, string> & configMap);
-	void Save(const string & fileName, const map<eSubjectType, string> & configMap);
-};
-
-extern cConfigManager configManager;
 
 /// @brief utils to e.g. edit a file from console
 /// @author rfree (maintainer)

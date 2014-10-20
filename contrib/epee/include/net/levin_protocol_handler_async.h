@@ -81,6 +81,7 @@ public:
 
   async_protocol_handler_config():m_pcommands_handler(NULL), m_max_packet_size(LEVIN_DEFAULT_MAX_PACKET_SIZE)
   {}
+  void del_connections(size_t count);
 };
 
 
@@ -666,6 +667,18 @@ void async_protocol_handler_config<t_connection_context>::del_connection(async_p
   m_connects.erase(pconn->get_connection_id());
   CRITICAL_REGION_END();
   m_pcommands_handler->on_connection_close(pconn->m_connection_context);
+}
+//------------------------------------------------------------------------------------------
+template<class t_connection_context>
+void async_protocol_handler_config<t_connection_context>::del_connections(size_t count)
+{
+	CRITICAL_REGION_BEGIN(m_connects_lock);
+	for (int i = 0; i < count; i++) {
+		if(m_connects.empty())
+			break;
+		m_connects.erase(m_connects.begin());	// TODO: check good connection closing
+	}
+	CRITICAL_REGION_END();
 }
 //------------------------------------------------------------------------------------------
 template<class t_connection_context>
